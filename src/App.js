@@ -7,7 +7,7 @@ import HomePage from "./pages/homepage/homepage.component";
 import ShopPage from "./pages/shop/shop.component";
 import SignInAndSignUp from "./pages/sign-in-and-sign-up/sign-in-and-sign-up.component";
 import Header from "./components/header/header.component";
-import { auth } from "./firebase/firebase.util";
+import { auth, createUserProfileDocument } from "./firebase/firebase.util";
 
 class App extends React.Component {
   constructor() {
@@ -21,16 +21,29 @@ class App extends React.Component {
   unsubscribeFromAuth = null;
 
   componentDidMount() {
-    // get connected user and subscribe to any changes
-    this.unsubscribeFromAuth = auth.onAuthStateChanged((user) => {
-      this.setState({ currentUser: user });
+    this.unsubscribeFromAuth = auth.onAuthStateChanged(async (userAuth) => {
+      if (userAuth) {
+        // creates users in db. If already exists, returns the ref anyway
+        const userRef = await createUserProfileDocument(userAuth);
 
-      console.log(user);
+        // setState the created/found user
+        userRef.onSnapshot((snapShot) => {
+          this.setState({
+            currentUser: {
+              id: snapShot.id,
+              ...snapShot.data(),
+            },
+          });
+        });
+      } else {
+        // making sure currentUser is null if no user is connected
+        this.setState({ currentUser: userAuth });
+      }
     });
   }
 
   componentWilUnmount() {
-    // unsubscribe to avoid memory leaks when comp
+    // unsubscribe to avoid memory leaks when comp unmounts
     this.unsubscribeFromAuth();
   }
 
