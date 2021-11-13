@@ -17,8 +17,8 @@ This project was made to get to learn React and Redux for state management. Ther
 
 ## Live Demo
 The project was deployed on Heroku.
-<a href="https://rct-clothing-live.herokuapp.com/">Link !</a>
-
+<a href="https://rct-clothing-live.herokuapp.com/">Link !</a> <br />
+*NB: Heroku's free plan was used, so the website might take up to 30sec to load.*
 
 ## Run Locally
 Clone project <br>
